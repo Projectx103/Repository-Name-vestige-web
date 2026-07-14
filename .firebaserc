@@ -1,0 +1,7 @@
+{
+  "projects": {
+    "development": "vestige-dev",
+    "staging": "vestige-staging",
+    "production": "vestige-prod"
+  }
+}
