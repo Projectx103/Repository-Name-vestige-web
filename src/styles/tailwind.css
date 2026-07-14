@@ -1,0 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Self-hosted font declarations land here once font files are added to
+ * src/assets/fonts (10 - Folder Structure.md §11). Left empty in Sprint 1 —
+ * font files themselves are a design-asset deliverable, not scaffolding.
+ */
