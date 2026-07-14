@@ -1,1 +1,0 @@
-export { cloudinaryConfig } from './config';
