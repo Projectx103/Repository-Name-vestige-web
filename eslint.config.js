@@ -103,7 +103,8 @@ export default tseslint.config(
             {
               target: './src/contexts',
               from: './src/features',
-              message: 'contexts/ may depend on lib/ but never on features/ (Folder Structure §19.1).',
+              message:
+                'contexts/ may depend on lib/ but never on features/ (Folder Structure §19.1).',
             },
           ],
         },
@@ -123,6 +124,15 @@ export default tseslint.config(
     // provider component and its consumer hook (e.g. ThemeProvider + useTheme)
     // from the same file — that's the correct pattern, not a fast-refresh bug.
     files: ['src/contexts/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
+    // Toast.tsx follows the identical Provider+hook colocation pattern, but
+    // its documented folder is components/ui/ (18 - Component Inventory.md
+    // §3), not contexts/ — same exception, different location.
+    files: ['src/components/ui/Toast.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },

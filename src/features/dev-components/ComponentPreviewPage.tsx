@@ -4,6 +4,9 @@ import { Card } from '@/components/ui/Card';
 import { Badge } from '@/components/ui/Badge';
 import { Input } from '@/components/ui/Input';
 import { Chip } from '@/components/ui/Chip';
+import { Dropdown } from '@/components/ui/Dropdown';
+import { Modal } from '@/components/ui/Modal';
+import { useToast } from '@/components/ui/Toast';
 import { useTheme } from '@/contexts';
 
 /**
@@ -19,9 +22,12 @@ import { useTheme } from '@/contexts';
  */
 export function ComponentPreviewPage() {
   const { theme, toggleTheme } = useTheme();
+  const { showToast } = useToast();
   const [isLoadingDemo, setIsLoadingDemo] = useState(false);
   const [chipSelected, setChipSelected] = useState(false);
   const [chips, setChips] = useState(['Size: M', 'Under ₱1,000']);
+  const [sortValue, setSortValue] = useState('newest');
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
 
   return (
     <div className="min-h-screen bg-paper px-md py-lg dark:bg-ink-dark">
@@ -133,6 +139,87 @@ export function ComponentPreviewPage() {
             <Chip selected={chipSelected} onClick={() => setChipSelected((s) => !s)}>
               Toggle selected
             </Chip>
+          </div>
+        </section>
+
+        {/* Dropdown */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Dropdown</h2>
+          <div className="flex flex-wrap items-center gap-sm">
+            <Dropdown
+              value={sortValue}
+              onSelect={setSortValue}
+              options={[
+                { value: 'newest', label: 'Newest first' },
+                { value: 'price-asc', label: 'Price: low to high' },
+                { value: 'price-desc', label: 'Price: high to low' },
+              ]}
+            />
+            <Dropdown
+              triggerLabel="Actions"
+              onSelect={(v) => showToast(`Action selected: ${v}`, 'info')}
+              options={[
+                { value: 'mark-shipped', label: 'Mark shipped' },
+                { value: 'flag', label: 'Flag for review' },
+                { value: 'reject', label: 'Reject item', destructive: true },
+              ]}
+            />
+            <Dropdown disabled placeholder="Disabled" options={[]} onSelect={() => undefined} />
+          </div>
+        </section>
+
+        {/* Modal */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Modal</h2>
+          <Button variant="secondary" onClick={() => setIsConfirmOpen(true)}>
+            Open confirmation modal
+          </Button>
+          <Modal
+            isOpen={isConfirmOpen}
+            onClose={() => setIsConfirmOpen(false)}
+            title="Reject this item?"
+            footer={
+              <>
+                <Button variant="secondary" onClick={() => setIsConfirmOpen(false)}>
+                  Cancel
+                </Button>
+                <Button
+                  variant="primary"
+                  onClick={() => {
+                    setIsConfirmOpen(false);
+                    showToast('Item rejected', 'success');
+                  }}
+                >
+                  Confirm
+                </Button>
+              </>
+            }
+          >
+            <p className="text-body-md text-ink dark:text-paper-dark">
+              This action can't be undone.
+            </p>
+          </Modal>
+        </section>
+
+        {/* Toast */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Toast</h2>
+          <div className="flex flex-wrap items-center gap-sm">
+            <Button variant="secondary" onClick={() => showToast('Listing published', 'success')}>
+              Trigger success
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => showToast("Couldn't save changes, try again", 'error')}
+            >
+              Trigger error
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => showToast('One item in your cart just sold', 'info')}
+            >
+              Trigger info
+            </Button>
           </div>
         </section>
       </div>

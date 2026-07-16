@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
 import { ThemeProvider } from '@/contexts';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
+import { ToastProvider } from '@/components/ui/Toast';
 import { QueryProvider } from './QueryProvider';
 
 interface AppProvidersProps {
@@ -20,7 +21,9 @@ interface AppProvidersProps {
  *
  * Ordering: Router outermost (nothing here needs routing context itself, but
  * it must wrap everything that will use it) → top-level ErrorBoundary (catches
- * anything below, including provider-init issues) → Theme → Query.
+ * anything below, including provider-init issues) → Theme → Query → Toast
+ * (innermost — doesn't depend on the others, and useToast() needs to be
+ * callable from anywhere in the tree below this point).
  */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
@@ -33,7 +36,9 @@ export function AppProviders({ children }: AppProvidersProps) {
         }
       >
         <ThemeProvider>
-          <QueryProvider>{children}</QueryProvider>
+          <QueryProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </QueryProvider>
         </ThemeProvider>
       </ErrorBoundary>
     </BrowserRouter>
