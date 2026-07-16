@@ -1,6 +1,7 @@
 import { forwardRef } from 'react';
 import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '@/utils/cn';
+import { InlineSpinner } from './InlineSpinner';
 
 export type ButtonVariant = 'primary' | 'secondary';
 export type ButtonSize = 'default' | 'compact';
@@ -21,31 +22,6 @@ export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
    */
   isLoading?: boolean;
   children: ReactNode;
-}
-
-/**
- * Minimal inline spinner, private to Button for now. Sprint 5 formalizes this
- * exact visual as the shared `InlineSpinner` primitive (04 - Design System.md
- * §16.2); at that point Button swaps this local markup for an import of it —
- * a planned internal refactor, not a redesign, since the rendered output is
- * meant to stay identical.
- */
-function Spinner({ className }: { className?: string }) {
-  return (
-    <svg
-      className={cn('animate-spin', className)}
-      viewBox="0 0 24 24"
-      fill="none"
-      aria-hidden="true"
-    >
-      <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="3" />
-      <path
-        className="opacity-85"
-        fill="currentColor"
-        d="M4 12a8 8 0 0 1 8-8V1.5A10.5 10.5 0 0 0 1.5 12H4Z"
-      />
-    </svg>
-  );
 }
 
 /**
@@ -104,7 +80,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       )}
       {...rest}
     >
-      {isLoading && <Spinner className="h-4 w-4" />}
+      {isLoading && <InlineSpinner className="h-4 w-4" />}
       {children}
     </button>
   );

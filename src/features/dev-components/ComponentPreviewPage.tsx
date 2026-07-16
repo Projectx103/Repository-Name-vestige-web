@@ -7,6 +7,12 @@ import { Chip } from '@/components/ui/Chip';
 import { Dropdown } from '@/components/ui/Dropdown';
 import { Modal } from '@/components/ui/Modal';
 import { useToast } from '@/components/ui/Toast';
+import { NumberedPagination, LoadMore } from '@/components/ui/Pagination';
+import { Tabs } from '@/components/ui/Tabs';
+import { AccordionItem } from '@/components/ui/Accordion';
+import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { ErrorState } from '@/components/ui/ErrorState';
 import { useTheme } from '@/contexts';
 
 /**
@@ -28,6 +34,9 @@ export function ComponentPreviewPage() {
   const [chips, setChips] = useState(['Size: M', 'Under ₱1,000']);
   const [sortValue, setSortValue] = useState('newest');
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [currentPage, setCurrentPage] = useState(4);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const [activeTab, setActiveTab] = useState('orders');
 
   return (
     <div className="min-h-screen bg-paper px-md py-lg dark:bg-ink-dark">
@@ -221,6 +230,86 @@ export function ComponentPreviewPage() {
               Trigger info
             </Button>
           </div>
+        </section>
+
+        {/* Pagination */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Pagination</h2>
+          <NumberedPagination
+            currentPage={currentPage}
+            totalPages={12}
+            onPageChange={setCurrentPage}
+          />
+          <LoadMore
+            isLoading={isLoadingMore}
+            onLoadMore={() => {
+              setIsLoadingMore(true);
+              setTimeout(() => setIsLoadingMore(false), 1200);
+            }}
+          />
+        </section>
+
+        {/* Tabs */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Tabs</h2>
+          <Tabs
+            activeId={activeTab}
+            onChange={setActiveTab}
+            tabs={[
+              { id: 'orders', label: 'Orders' },
+              { id: 'wishlist', label: 'Wishlist' },
+              { id: 'addresses', label: 'Addresses' },
+            ]}
+          />
+          <p className="text-body-sm text-ink-muted dark:text-paper-dark-muted">
+            Active: {activeTab}
+          </p>
+        </section>
+
+        {/* Accordion */}
+        <section className="max-w-container-form space-y-xs">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Accordion</h2>
+          <AccordionItem title="Materials & Care" defaultOpen>
+            100% cotton. Machine wash cold, hang dry.
+          </AccordionItem>
+          <AccordionItem title="Shipping & Returns">
+            Ships in 2-3 business days. Returns accepted within 14 days.
+          </AccordionItem>
+        </section>
+
+        {/* SkeletonBlock */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">SkeletonBlock</h2>
+          <div className="flex gap-sm">
+            <SkeletonBlock className="h-32 w-32" />
+            <div className="flex-1 space-y-xs">
+              <SkeletonBlock className="h-4 w-3/4" />
+              <SkeletonBlock className="h-4 w-1/2" />
+            </div>
+          </div>
+        </section>
+
+        {/* EmptyState */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Empty State</h2>
+          <Card>
+            <EmptyState
+              message="Your wishlist is empty. Items you save will appear here."
+              actionLabel="Browse the Catalog"
+              onAction={() => showToast('Would navigate to /shop', 'info')}
+            />
+          </Card>
+        </section>
+
+        {/* ErrorState */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">Error State</h2>
+          <ErrorState variant="inline" message="Enter a valid email address" />
+          <ErrorState
+            variant="section"
+            message="Related items failed to load."
+            onRetry={() => showToast('Retrying...', 'info')}
+          />
         </section>
       </div>
     </div>
