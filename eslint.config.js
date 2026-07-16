@@ -48,6 +48,21 @@ const crossFeatureZones = FEATURES.map((feature) => ({
 export default tseslint.config(
   { ignores: ['dist', 'node_modules', 'functions/lib'] },
   {
+    // Root-level test files (Security Rules tests, shared fixtures) aren't
+    // part of the src/ dependency graph, so they don't need the import-
+    // boundary zones or the tsconfig.app.json project reference below — a
+    // lighter, non-type-aware config is intentional here, not an oversight.
+    extends: [js.configs.recommended, ...tseslint.configs.recommended],
+    files: ['firestore.rules.test.ts', 'test/**/*.ts'],
+    languageOptions: {
+      ecmaVersion: 2022,
+      globals: globals.node,
+    },
+    rules: {
+      '@typescript-eslint/no-explicit-any': 'error',
+    },
+  },
+  {
     extends: [js.configs.recommended, ...tseslint.configs.strict, ...tseslint.configs.stylistic],
     files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
