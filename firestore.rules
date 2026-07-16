@@ -1,0 +1,115 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    function hasRole(role) {
+      return isSignedIn() && role in request.auth.token.roles;
+    }
+    function isOwnerUid(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+    function isStaff() {
+      return hasRole('procurement_staff') || hasRole('curator')
+          || hasRole('ops_admin') || hasRole('super_admin');
+    }
+    function onlyChangedFields(allowedFields) {
+      return request.resource.data.diff(resource.data).affectedKeys().hasOnly(allowedFields);
+    }
+
+    match /users/{uid} {
+      allow read: if isOwnerUid(uid) || hasRole('ops_admin') || hasRole('super_admin');
+      allow update: if isOwnerUid(uid)
+        && onlyChangedFields(['displayName', 'notificationPrefs', 'defaultShippingAddressId']);
+      allow write: if false; // creation only via onUserCreate Cloud Function
+    }
+
+    match /addresses/{addressId} {
+      allow read, write: if isSignedIn() && resource.data.ownerUid == request.auth.uid;
+      allow create: if isSignedIn() && request.resource.data.ownerUid == request.auth.uid;
+    }
+
+    match /brands/{brandId} {
+      allow read: if true;
+      allow write: if hasRole('curator') || hasRole('ops_admin') || hasRole('super_admin');
+    }
+
+    match /categories/{categoryId} {
+      allow read: if true;
+      allow write: if hasRole('ops_admin') || hasRole('super_admin');
+    }
+
+    match /procurementBatches/{batchId} {
+      allow read, write: if hasRole('procurement_staff') || hasRole('ops_admin') || hasRole('super_admin');
+    }
+
+    match /intakeItems/{itemId} {
+      allow read: if isStaff();
+      allow write: if hasRole('curator') || hasRole('procurement_staff')
+                    || hasRole('ops_admin') || hasRole('super_admin');
+    }
+
+    match /listings/{listingId} {
+      allow read: if resource.data.status in ['available', 'sold'] || isStaff();
+
+      // Inventory Staff: everything except the photos array
+      allow update: if hasRole('curator')
+        && onlyChangedFields(['title','description','brandId','brandName','categoryId',
+            'categoryPath','size','condition','conditionNotes','measurements','materials',
+            'colorTags','priceCents','originalMsrpCents','status','isFeatured',
+            'markdownScheduleApplied','searchKeywords','curatedByUid','publishedAt','updatedAt']);
+
+      // Photographer: photos array only (enforced via a separate curator-scoped
+      // Cloud-Function-issued custom claim segment checked in application logic;
+      // Security Rules alone cannot distinguish Photographer from Inventory Staff within
+      // the same 'curator' claim, so this boundary is additionally enforced by the
+      // publishListing and photo-write Cloud Functions per Section 5)
+      allow update: if hasRole('curator') && onlyChangedFields(['photos', 'updatedAt']);
+
+      allow create: if hasRole('curator') || hasRole('ops_admin') || hasRole('super_admin');
+      allow delete: if false; // listings are never hard-deleted, only unpublished
+    }
+
+    match /listings/{listingId}/statusHistory/{eventId} {
+      allow read: if isStaff();
+      allow create: if isStaff();
+      allow update, delete: if false; // append-only
+    }
+
+    match /carts/{uid} {
+      allow read, write: if isOwnerUid(uid);
+    }
+
+    match /wishlists/{uid} {
+      allow read, write: if isOwnerUid(uid);
+    }
+
+    match /orders/{orderId} {
+      allow read: if (resource.data.buyerUid != null && isOwnerUid(resource.data.buyerUid))
+                    || hasRole('ops_admin') || hasRole('super_admin');
+      allow write: if false; // Cloud Functions only, Admin SDK, no exceptions
+    }
+
+    match /orders/{orderId}/statusHistory/{eventId} {
+      allow read: if hasRole('ops_admin') || hasRole('super_admin');
+      allow write: if false;
+    }
+
+    match /orderItems/{orderItemId} {
+      allow read: if hasRole('ops_admin') || hasRole('super_admin'); // buyers read via denormalized order data, not this collection directly
+      allow write: if false;
+    }
+
+    match /roleGrants/{grantId} {
+      allow read: if hasRole('super_admin') || hasRole('ops_admin');
+      allow write: if false; // written only by the role-granting Cloud Function
+    }
+
+    match /config/{docId} {
+      allow read: if true;
+      allow write: if hasRole('super_admin');
+    }
+  }
+}
