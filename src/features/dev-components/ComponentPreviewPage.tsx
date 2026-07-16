@@ -13,6 +13,12 @@ import { AccordionItem } from '@/components/ui/Accordion';
 import { SkeletonBlock } from '@/components/ui/SkeletonBlock';
 import { EmptyState } from '@/components/ui/EmptyState';
 import { ErrorState } from '@/components/ui/ErrorState';
+import { ConditionBadge } from '@/components/shared/ConditionBadge';
+import { AvailabilityBadge } from '@/components/shared/AvailabilityBadge';
+import { PriceTag } from '@/components/shared/PriceTag';
+import { CloudinaryImage } from '@/components/shared/CloudinaryImage';
+import { ProductCard } from '@/components/shared/ProductCard';
+import { SummaryCard } from '@/components/shared/SummaryCard';
 import { useTheme } from '@/contexts';
 
 /**
@@ -310,6 +316,84 @@ export function ComponentPreviewPage() {
             message="Related items failed to load."
             onRetry={() => showToast('Retrying...', 'info')}
           />
+        </section>
+
+        {/* StatusBadge — no separate component; it's Badge with tone chosen per pipeline stage (04 - Design System.md §8.1) */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">
+            StatusBadge (Badge usage)
+          </h2>
+          <div className="flex flex-wrap items-center gap-sm">
+            <Badge tone="neutral">Received</Badge>
+            <Badge tone="neutral">In Review</Badge>
+            <Badge tone="success">Ready to Publish</Badge>
+            <Badge tone="error">Rejected</Badge>
+          </div>
+        </section>
+
+        {/* ConditionBadge / AvailabilityBadge */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">
+            ConditionBadge / AvailabilityBadge
+          </h2>
+          <div className="flex flex-wrap items-center gap-sm">
+            <ConditionBadge condition="A" />
+            <ConditionBadge condition="B" />
+            <ConditionBadge condition="C" />
+            <AvailabilityBadge status="available" />
+            <AvailabilityBadge status="sold" />
+          </div>
+        </section>
+
+        {/* PriceTag */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">PriceTag</h2>
+          <div className="flex flex-wrap items-center gap-md">
+            <PriceTag priceCents={185000} />
+            <PriceTag priceCents={185000} originalMsrpCents={620000} />
+          </div>
+        </section>
+
+        {/* CloudinaryImage */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">
+            CloudinaryImage
+          </h2>
+          <CloudinaryImage
+            publicId="catalog/demo/photo_1"
+            preset="card_600"
+            alt="Demo product photo"
+            className="h-48 w-48"
+          />
+        </section>
+
+        {/* ProductCard */}
+        <section className="space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">ProductCard</h2>
+          <div className="grid grid-cols-2 gap-sm tablet:grid-cols-3">
+            <ProductCard
+              title="Wool Blend Overcoat"
+              brandName="Theory"
+              priceCents={18500}
+              originalMsrpCents={62000}
+              imagePublicId="catalog/demo/photo_1"
+            />
+            <ProductCard
+              title="Silk Scarf"
+              brandName="Hermès"
+              priceCents={9500}
+              imagePublicId="catalog/demo/photo_2"
+              isSold
+            />
+          </div>
+        </section>
+
+        {/* SummaryCard */}
+        <section className="max-w-container-form space-y-sm">
+          <h2 className="font-display text-body-lg text-ink dark:text-paper-dark">SummaryCard</h2>
+          <SummaryCard title="Order #10293" action={<Badge tone="success">Delivered</Badge>}>
+            2 items · ₱285.00 total
+          </SummaryCard>
         </section>
       </div>
     </div>

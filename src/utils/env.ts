@@ -32,6 +32,11 @@ export const firebaseEnvConfig = {
 };
 
 export const cloudinaryEnvConfig = {
-  cloudName: requireEnv('VITE_CLOUDINARY_CLOUD_NAME'),
-  uploadPreset: requireEnv('VITE_CLOUDINARY_UPLOAD_PRESET'),
+  // Not using requireEnv here: Cloudinary isn't configured until M4, so this
+  // must not throw at module-import time — that would crash any page that
+  // imports CloudinaryImage before M4 exists. CloudinaryImage itself checks
+  // for an empty cloudName and renders its "not configured" state instead of
+  // attempting a request.
+  cloudName: import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || '',
+  uploadPreset: import.meta.env.VITE_CLOUDINARY_UPLOAD_PRESET || '',
 };
