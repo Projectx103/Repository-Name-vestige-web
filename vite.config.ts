@@ -20,7 +20,7 @@ export default defineConfig({
       '@/utils': path.resolve(__dirname, './src/utils'),
       '@/types': path.resolve(__dirname, './src/types'),
       '@/constants': path.resolve(__dirname, './src/constants'),
-      '@vestige/shared-schemas': path.resolve(__dirname, '../packages/shared-schemas/src'),
+      '@vestige/shared-schemas': path.resolve(__dirname, './packages/shared-schemas/src'),
     },
   },
   build: {
