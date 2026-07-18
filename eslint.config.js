@@ -53,7 +53,7 @@ export default tseslint.config(
     // boundary zones or the tsconfig.app.json project reference below — a
     // lighter, non-type-aware config is intentional here, not an oversight.
     extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['firestore.rules.test.ts', 'test/**/*.ts'],
+    files: ['firestore.rules.test.ts', 'test/**/*.ts', 'scripts/**/*.ts'],
     languageOptions: {
       ecmaVersion: 2022,
       globals: globals.node,

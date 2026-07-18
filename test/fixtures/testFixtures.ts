@@ -218,3 +218,14 @@ export function buildTestPricingRules(overrides: Partial<Record<string, unknown>
     ...overrides,
   };
 }
+
+export function buildTestMarkdownSchedule(overrides: Partial<Record<string, unknown>> = {}) {
+  return {
+    thresholds: [
+      { days: 14, markdownPct: 10 },
+      { days: 30, markdownPct: 25 },
+      { days: 45, markdownPct: 40 },
+    ],
+    ...overrides,
+  };
+}
