@@ -9,6 +9,7 @@ import { AuthLayout } from '@/app/layouts/AuthLayout';
 import LoginPage from './LoginPage';
 import RegisterPage from './RegisterPage';
 import ForgotPasswordPage from './ForgotPasswordPage';
+import ResetPasswordPage from './ResetPasswordPage';
 
 // Lazy-loaded: dev-only tools, never add weight to the real buyer/staff bundle.
 const ComponentPreviewPage = lazy(() =>
@@ -62,6 +63,7 @@ export function AppRouter() {
         <Route path={ROUTES.login} element={<LoginPage />} />
         <Route path={ROUTES.register} element={<RegisterPage />} />
         <Route path={ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
+        <Route path={ROUTES.resetPassword} element={<ResetPasswordPage />} />
       </Route>
 
       <Route
