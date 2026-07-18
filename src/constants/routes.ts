@@ -15,6 +15,15 @@ export const ROUTES = {
   register: '/register',
   forgotPassword: '/forgot-password',
   admin: '/admin',
+  /** Staff console routes — not yet wired into AppRouter (their pages are built in M10-M13); declared now so Sidebar's nav items have a real target to point at rather than a placeholder string. */
+  adminProcurement: '/admin/procurement',
+  adminCuration: '/admin/curation',
+  adminPhotography: '/admin/photography',
+  adminOrders: '/admin/orders',
+  adminSupport: '/admin/support',
+  adminReports: '/admin/reports',
+  adminRoles: '/admin/settings/roles',
   /** Internal-only, not a real feature route — never linked from real navigation. */
   devComponents: '/dev/components',
+  devLayouts: '/dev/layouts',
 } as const;
