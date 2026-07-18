@@ -14,6 +14,7 @@
     "test": "npx firebase-tools emulators:exec --project demo-vestige --only auth,firestore \"vitest run\""
   },
   "dependencies": {
+    "cloudinary": "^2.5.1",
     "firebase-admin": "^13.0.1",
     "firebase-functions": "^6.1.1",
     "zod": "^3.24.1"
