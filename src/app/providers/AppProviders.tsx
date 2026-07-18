@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import { BrowserRouter } from 'react-router-dom';
-import { ThemeProvider } from '@/contexts';
+import { ThemeProvider, AuthProvider } from '@/contexts';
 import { ErrorBoundary } from '@/components/shared/ErrorBoundary';
 import { ToastProvider } from '@/components/ui/Toast';
 import { QueryProvider } from './QueryProvider';
@@ -15,15 +15,12 @@ interface AppProvidersProps {
  * ad hoc elsewhere in the tree, so "what wraps the whole app" always has one
  * findable answer.
  *
- * AuthContext is deliberately absent here — it's built in M3 alongside the
- * role infrastructure it depends on, and will be added to this nesting at
- * that point rather than stubbed out now.
- *
- * Ordering: Router outermost (nothing here needs routing context itself, but
- * it must wrap everything that will use it) → top-level ErrorBoundary (catches
- * anything below, including provider-init issues) → Theme → Query → Toast
- * (innermost — doesn't depend on the others, and useToast() needs to be
- * callable from anywhere in the tree below this point).
+ * Ordering: Router outermost (ProtectedRoute needs routing context, and Auth
+ * needs to be available to anything Router renders) → top-level ErrorBoundary
+ * → Auth (foundational — the bootstrap sequence in 21 - Frontend
+ * Architecture.md §2 requires auth state to resolve before the route tree
+ * itself renders, which AppRouter checks via useAuth()) → Theme → Query →
+ * Toast (innermost — doesn't depend on the others).
  */
 export function AppProviders({ children }: AppProvidersProps) {
   return (
@@ -35,11 +32,13 @@ export function AppProviders({ children }: AppProvidersProps) {
           </div>
         }
       >
-        <ThemeProvider>
-          <QueryProvider>
-            <ToastProvider>{children}</ToastProvider>
-          </QueryProvider>
-        </ThemeProvider>
+        <AuthProvider>
+          <ThemeProvider>
+            <QueryProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </QueryProvider>
+          </ThemeProvider>
+        </AuthProvider>
       </ErrorBoundary>
     </BrowserRouter>
   );

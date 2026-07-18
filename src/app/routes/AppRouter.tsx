@@ -1,6 +1,8 @@
 import { lazy, Suspense } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { ROUTES } from '@/constants/routes';
+import { useAuth } from '@/hooks/useAuth';
+import { PageLoader } from '@/components/ui/PageLoader';
 
 // Lazy-loaded: this is a dev-only tool, not a real feature — it should never
 // add weight to the main bundle that real buyers/staff download.
@@ -13,18 +15,23 @@ const ComponentPreviewPage = lazy(() =>
 /**
  * Root route tree.
  *
- * Sprint 1 scope is routing *structure* only — no page components exist yet
- * (those arrive feature-by-feature starting at M3's auth pages and M5's
- * catalog pages). The single index route below renders an inline placeholder
- * so the app has something to mount, satisfying M0's acceptance criterion
- * ("the Vite dev server renders a blank app shell with Tailwind tokens
- * applied") without pre-building any actual page.
+ * The route tree does not render until AuthContext has resolved its initial
+ * auth state (21 - Frontend Architecture.md §2's bootstrap sequence) — this
+ * prevents a flash of unauthenticated content or an incorrect ProtectedRoute
+ * redirect firing before the real auth state is known. A single, brief
+ * PageLoader covers this window, never a longer/more elaborate splash screen.
  *
  * As pages land, each route below is replaced with a lazy-loaded page import
  * (route-based code splitting, per 21 - Frontend Architecture.md §9) — the
  * <Routes> structure itself does not need to change shape to accommodate that.
  */
 export function AppRouter() {
+  const { isLoading } = useAuth();
+
+  if (isLoading) {
+    return <PageLoader />;
+  }
+
   return (
     <Routes>
       <Route
