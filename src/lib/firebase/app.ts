@@ -1,5 +1,5 @@
 import { initializeApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, connectAuthEmulator, type Auth } from 'firebase/auth';
+import { getAuth, connectAuthEmulator, GoogleAuthProvider, type Auth } from 'firebase/auth';
 import { getFirestore, connectFirestoreEmulator, type Firestore } from 'firebase/firestore';
 import { getFunctions, connectFunctionsEmulator, type Functions } from 'firebase/functions';
 import { isSupported, getAnalytics, type Analytics } from 'firebase/analytics';
@@ -18,6 +18,7 @@ import { firebaseEnvConfig, useFirebaseEmulators } from '@/utils/env';
 export const firebaseApp: FirebaseApp = initializeApp(firebaseEnvConfig);
 
 export const auth: Auth = getAuth(firebaseApp);
+export const googleProvider = new GoogleAuthProvider();
 export const db: Firestore = getFirestore(firebaseApp);
 export const functions: Functions = getFunctions(firebaseApp);
 

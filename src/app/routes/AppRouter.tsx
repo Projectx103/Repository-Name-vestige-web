@@ -6,6 +6,9 @@ import { PageLoader } from '@/components/ui/PageLoader';
 import { BuyerLayout } from '@/app/layouts/BuyerLayout';
 import { StaffLayout } from '@/app/layouts/StaffLayout';
 import { AuthLayout } from '@/app/layouts/AuthLayout';
+import LoginPage from './LoginPage';
+import RegisterPage from './RegisterPage';
+import ForgotPasswordPage from './ForgotPasswordPage';
 
 // Lazy-loaded: dev-only tools, never add weight to the real buyer/staff bundle.
 const ComponentPreviewPage = lazy(() =>
@@ -22,16 +25,13 @@ const ComponentPreviewPage = lazy(() =>
  * single, brief PageLoader covers this window.
  *
  * Nested routes mirror the layouts (10 - Folder Structure.md §14): a
- * BuyerLayout route wraps public/account routes, a StaffLayout route wraps
- * /admin routes. Only the homepage is real content so far — everything else
- * (Shop, Login, the whole /admin tree) is still a placeholder route,
- * replaced page-by-page in later sprints/milestones without needing to
- * change this nesting shape.
+ * BuyerLayout route wraps public/account routes, an AuthLayout route wraps
+ * the three real auth pages built this sprint, a StaffLayout route wraps
+ * /admin routes (still all placeholder — those pages land in M10-M13).
  *
- * /dev/layouts previews StaffLayout and AuthLayout with mock content — real
- * nested <Route> structure, not a fake wrapper, since <Outlet /> only
- * resolves within an actual route match. Removed once M9/M13's real staff
- * and account pages exist to exercise these layouts for real.
+ * /dev/layouts/staff still previews StaffLayout with mock content, since no
+ * real staff page exists yet to exercise it. The equivalent auth preview is
+ * gone — /login, /register, /forgot-password are real pages now.
  */
 export function AppRouter() {
   const { isLoading } = useAuth();
@@ -58,6 +58,12 @@ export function AppRouter() {
         />
       </Route>
 
+      <Route element={<AuthLayout />}>
+        <Route path={ROUTES.login} element={<LoginPage />} />
+        <Route path={ROUTES.register} element={<RegisterPage />} />
+        <Route path={ROUTES.forgotPassword} element={<ForgotPasswordPage />} />
+      </Route>
+
       <Route
         path={ROUTES.devComponents}
         element={
@@ -74,16 +80,6 @@ export function AppRouter() {
           element={
             <div className="text-body-md text-ink dark:text-paper-dark">
               StaffLayout preview — mock console content goes here.
-            </div>
-          }
-        />
-      </Route>
-      <Route path={`${ROUTES.devLayouts}/auth`} element={<AuthLayout />}>
-        <Route
-          index
-          element={
-            <div className="rounded border border-stone p-md text-body-md text-ink dark:border-stone-dark dark:text-paper-dark">
-              AuthLayout preview — a real Login form goes here (Sprint 16).
             </div>
           }
         />

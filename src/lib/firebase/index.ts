@@ -1,1 +1,1 @@
-export { firebaseApp, auth, db, functions, initAnalytics } from './app';
+export { firebaseApp, auth, googleProvider, db, functions, initAnalytics } from './app';
